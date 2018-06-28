@@ -60,6 +60,7 @@ public class HttpClient {
         HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
 
         httpClientBuilder.setConnectionManager(httpClientConnectionManager);
+        httpClientBuilder.evictExpiredConnections();
 
         return httpClientBuilder;
     }
