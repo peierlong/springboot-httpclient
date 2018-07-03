@@ -31,7 +31,7 @@ public class HttpClient {
     private Integer socketTimeout;
 
     @Value("${http.staleConnectionCheckEnabled}")
-    private boolean staleConnectionCheckEnabled;
+    private Integer validateAfterInactivity;
 
     /**
      * 首先实例化一个连接池管理器，设置最大连接数、并发连接数
@@ -44,6 +44,7 @@ public class HttpClient {
         httpClientConnectionManager.setMaxTotal(maxTotal);
         //并发数
         httpClientConnectionManager.setDefaultMaxPerRoute(defaultMaxPerRoute);
+        httpClientConnectionManager.setValidateAfterInactivity(validateAfterInactivity);
         return httpClientConnectionManager;
     }
 
@@ -87,8 +88,7 @@ public class HttpClient {
         RequestConfig.Builder builder = RequestConfig.custom();
         return builder.setConnectTimeout(connectTimeout)
                 .setConnectionRequestTimeout(connectionRequestTimeout)
-                .setSocketTimeout(socketTimeout)
-                .setStaleConnectionCheckEnabled(staleConnectionCheckEnabled);
+                .setSocketTimeout(socketTimeout);
     }
 
     /**
