@@ -31,35 +31,29 @@ public class HttpAPI {
 
     private static final String REQUEST_FAILED = "请求失败, 系统异常";
 
-    public String Get(String url) {
+    public HttpResult Get(String url) {
         return sendGet(new HttpGet(url));
     }
 
-    public String GetMap(String url, Map<String, String> params) {
+    public HttpResult GetMap(String url, Map<String, String> params) {
         HttpGet httpGet = new HttpGet(buildGetParams(url, params));
         return sendGet(httpGet);
     }
 
-    public String GetMap(String url, Header header, Map<String, String> params) {
+    public HttpResult GetMap(String url, Header header, Map<String, String> params) {
         HttpGet httpGet = new HttpGet(buildGetParams(url, params));
         httpGet.setHeader(header);
         return sendGet(httpGet);
     }
 
-    private String sendGet(HttpGet httpGet) {
+    private HttpResult sendGet(HttpGet httpGet) {
         httpGet.setConfig(requestConfig);
         try {
             HttpResponse response = httpClient.execute(httpGet);
-            int statusCode = response.getStatusLine().getStatusCode();
-            if (statusCode >= 200 && statusCode < 300) {
-                HttpEntity entity = response.getEntity();
-                return entity != null ? EntityUtils.toString(entity, "UTF-8") : null;
-            } else {
-                return REQUEST_FAILED + " response status: " + statusCode;
-            }
+            return genHttpResult(response);
         } catch (IOException e) {
             e.printStackTrace();
-            return REQUEST_FAILED;
+            return new HttpResult(-1, REQUEST_FAILED);
         }
     }
 
@@ -77,7 +71,7 @@ public class HttpAPI {
         return url + "?" + sb;
     }
 
-    public String PostJson(String url, String jsonString) {
+    public HttpResult PostJson(String url, String jsonString) {
         HttpPost httpPost = new HttpPost(url);
         httpPost.setConfig(requestConfig);
         try {
@@ -86,35 +80,23 @@ public class HttpAPI {
             s.setContentType("application/json");//发送json数据需要设置contentType
             httpPost.setEntity(s);
             HttpResponse response = httpClient.execute(httpPost);
-            int statusCode = response.getStatusLine().getStatusCode();
-            if (statusCode >= 200 && statusCode < 300) {
-                HttpEntity entity = response.getEntity();
-                return entity != null ? EntityUtils.toString(entity, "UTF-8") : null;
-            } else {
-                return REQUEST_FAILED + " response status: " + statusCode;
-            }
+            return genHttpResult(response);
         } catch (IOException e) {
             e.printStackTrace();
-            return REQUEST_FAILED;
+            return new HttpResult(-1, REQUEST_FAILED);
         }
     }
 
-    public String PostMap(String url, Map<String, String> params) {
+    public HttpResult PostMap(String url, Map<String, String> params) {
         HttpPost httpPost = new HttpPost(url);
         httpPost.setConfig(RequestConfig.custom().setConnectTimeout(4500).setConnectionRequestTimeout(4500).build());
         try {
             httpPost.setEntity(new UrlEncodedFormEntity(buildPostParams(params)));
             HttpResponse response = httpClient.execute(httpPost);
-            int statusCode = response.getStatusLine().getStatusCode();
-            if (statusCode >= 200 && statusCode < 300) {
-                HttpEntity entity = response.getEntity();
-                return entity != null ? EntityUtils.toString(entity, "UTF-8") : null;
-            } else {
-                return REQUEST_FAILED + " response status: " + statusCode;
-            }
+            return genHttpResult(response);
         } catch (IOException e) {
             e.printStackTrace();
-            return REQUEST_FAILED;
+            return new HttpResult(-1, REQUEST_FAILED);
         }
     }
 
@@ -123,6 +105,15 @@ public class HttpAPI {
         for (String key : params.keySet())
             result.add(new BasicNameValuePair(key != null ? key : "", params.get(key)));
         return result;
+    }
+
+    private HttpResult genHttpResult(HttpResponse response) {
+        try {
+            return new HttpResult(response.getStatusLine().getStatusCode(),
+                    EntityUtils.toString(response.getEntity(), "UTF-8"));
+        } catch (IOException e) {
+            return new HttpResult(-1, REQUEST_FAILED);
+        }
     }
 
 }
