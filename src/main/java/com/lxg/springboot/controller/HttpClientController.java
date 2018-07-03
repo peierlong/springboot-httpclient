@@ -20,6 +20,6 @@ public class HttpClientController {
     public String test() throws Exception {
         String str = httpAPI.Get("http://www.baidu.com");
         System.out.println(str);
-        return "hello";
+        return str;
     }
 }

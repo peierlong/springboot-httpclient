@@ -53,7 +53,7 @@ public class HttpAPI {
             int statusCode = response.getStatusLine().getStatusCode();
             if (statusCode >= 200 && statusCode < 300) {
                 HttpEntity entity = response.getEntity();
-                return entity != null ? EntityUtils.toString(entity) : null;
+                return entity != null ? EntityUtils.toString(entity, "UTF-8") : null;
             } else {
                 return REQUEST_FAILED + " response status: " + statusCode;
             }
@@ -89,7 +89,7 @@ public class HttpAPI {
             int statusCode = response.getStatusLine().getStatusCode();
             if (statusCode >= 200 && statusCode < 300) {
                 HttpEntity entity = response.getEntity();
-                return entity != null ? EntityUtils.toString(entity) : null;
+                return entity != null ? EntityUtils.toString(entity, "UTF-8") : null;
             } else {
                 return REQUEST_FAILED + " response status: " + statusCode;
             }
@@ -108,7 +108,7 @@ public class HttpAPI {
             int statusCode = response.getStatusLine().getStatusCode();
             if (statusCode >= 200 && statusCode < 300) {
                 HttpEntity entity = response.getEntity();
-                return entity != null ? EntityUtils.toString(entity) : null;
+                return entity != null ? EntityUtils.toString(entity, "UTF-8") : null;
             } else {
                 return REQUEST_FAILED + " response status: " + statusCode;
             }

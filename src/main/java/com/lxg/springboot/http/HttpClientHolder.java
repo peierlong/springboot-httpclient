@@ -30,7 +30,7 @@ public class HttpClientHolder {
     @Value("${http.socketTimeout}")
     private Integer socketTimeout;
 
-    @Value("${http.staleConnectionCheckEnabled}")
+    @Value("${http.validateAfterInactivity}")
     private Integer validateAfterInactivity;
 
     /**
